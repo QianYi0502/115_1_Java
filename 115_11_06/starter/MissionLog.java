@@ -1,24 +1,29 @@
+
 import java.util.ArrayList;
-import java.util.Arrays;
 
-// 第五週只改日誌表示；行動規則與第四週完整輸出保持相同。
 public class MissionLog {
-    public static void main(String[] args) {
-        int[] script = {1, 1, 2};
-        runMission(script, 20, 0);
-    }
 
-    // 教師測試入口；script 非 null，初始 energy 為 0..20、samples 非負。
-    static void runMission(int[] script, int energy, int samples) {
+    public static void main(String[] args) {
+
+        int energy = 20;
+        int samples = 0;
         int actionCount = 0;
-        boolean running = true;
+
+        int[] script = {3, 9, 0};
+
         ArrayList<MissionStep> history = new ArrayList<>();
 
-        // 先判斷狀態，能源已耗盡或樣本已達標時，不再執行第一筆指令。
-        for (int i = 0; i < script.length && running && energy > 0 && samples < 5; i++) {
-            int command = script[i];
+        int[] counts = new int[10];
+
+        int lowestEnergy = energy;
+        String outcome = "SUCCESS";
+
+        for (int command : script) {
+
             String result;
+
             switch (command) {
+
                 case 1:
                     if (energy >= 6) {
                         energy -= 6;
@@ -26,19 +31,21 @@ public class MissionLog {
                         actionCount++;
                         result = "OK";
                     } else {
-                        result = "NOT_ENOUGH_ENERGY";
+                        result = "REJECTED";
                     }
                     break;
+
                 case 2:
                     if (energy >= 2) {
                         energy -= 2;
-                        samples++;
+                        samples += 1;
                         actionCount++;
                         result = "OK";
                     } else {
-                        result = "NOT_ENOUGH_ENERGY";
+                        result = "REJECTED";
                     }
                     break;
+
                 case 3:
                     if (energy < 20) {
                         energy += 5;
@@ -51,77 +58,89 @@ public class MissionLog {
                         result = "ALREADY_FULL";
                     }
                     break;
+
                 case 0:
-                    running = false;
                     result = "RETURN";
                     break;
+
                 default:
                     result = "UNKNOWN_COMMAND";
                     break;
             }
-            // 每讀一筆就建立一個新物件，記錄行動執行後的快照。
-            // TODO 4：在這裡一次新增本步的 MissionStep，包含拒絕、無效與返回。
+
+            // TODO 4：建立任務紀錄並加入歷程
+            history.add(new MissionStep(command, energy, result));
+
+            if (result.equals("OK")) {
+                counts[0]++;
+            } else if (result.equals("REJECTED")) {
+                counts[1]++;
+            } else if (result.equals("UNKNOWN_COMMAND")) {
+                counts[2]++;
+            } else if (result.equals("RETURN")) {
+                counts[3]++;
+            } else if (result.equals("ALREADY_FULL")) {
+                counts[4]++;
+            }
+
+            if (energy < lowestEnergy) {
+                lowestEnergy = energy;
+            }
+
+            if (result.equals("RETURN")) {
+                outcome = "RETURNED";
+                break;
+            }
         }
 
-        String outcome;
-        if (samples >= 5) {
-            outcome = "SUCCESS";
-        } else if (energy == 0) {
-            outcome = "EXHAUSTED";
-        } else if (!running) {
-            outcome = "RETURNED";
-        } else {
-            // 固定腳本用完不等於返回；保留尚未完成這個新結果。
-            outcome = "UNFINISHED";
-        }
-        printReplay(history);
-        System.out.println("counts[0..3]=" + Arrays.toString(countCommands(history)));
-        printSummary(script.length, history);
-        System.out.println("final energy=" + energy + ", samples=" + samples
-                + ", actionCount=" + actionCount + " -> " + outcome);
-        System.out.println("battery=" + calculateBatteryPercent(energy));
-    }
+        // TODO 5：依照順序回放每一步任務紀錄
+        System.out.println("=== Replay ===");
 
-    static int[] countCommands(ArrayList<MissionStep> history) {
-        int[] counts = new int[4];
-        for (MissionStep step : history) {
+        for (int i = 0; i < history.size(); i++) {
+            MissionStep step = history.get(i);
+
             int command = step.getCommand();
-            if (command >= 0 && command < counts.length) {
-                counts[command]++;
-            }
+            int stepEnergy = step.getEnergy();
+            String result = step.getResult();
+
+            System.out.println("step " + (i + 1) + ": command=" + command
+                    + ", result=" + result + ", energy=" + stepEnergy);
         }
-        return counts;
-    }
 
-    static void printReplay(ArrayList<MissionStep> history) {
-        System.out.println("=== replay ===");
-        // TODO 5：依索引取出 MissionStep，以 getter 印出與第四週相同的逐步回放。
-    }
-
-    static void printSummary(int scriptLength, ArrayList<MissionStep> history) {
+        // TODO 6：統計成功與返回次數
         int ok = 0;
+        int rejected = 0;
         int returned = 0;
-        // TODO 6：走訪 history，計算 OK 與 RETURN 筆數；後面的摘要與最低值已提供。
-        int steps = history.size();
-        int rejected = steps - ok - returned;
-        int ignored = scriptLength - steps;
-        System.out.println("steps=" + steps + ", ok=" + ok
-                + ", rejected=" + rejected + ", ignored=" + ignored);
-        if (history.isEmpty()) {
-            System.out.println("lowest energy=N/A");
-        } else {
-            // MissionStep 不是 Integer；讀能源欄位，以已教迴圈求最小值。
-            int lowest = history.get(0).getEnergy();
-            for (MissionStep step : history) {
-                if (step.getEnergy() < lowest) {
-                    lowest = step.getEnergy();
-                }
-            }
-            System.out.println("lowest energy=" + lowest);
-        }
-    }
 
-    static double calculateBatteryPercent(int energy) {
-        return energy / 20.0 * 100;
+        for (MissionStep step : history) {
+            if (step.isSuccessful()) {
+                ok++;
+            }
+
+            if ("RETURN".equals(step.getResult())) {
+                returned++;
+            }
+        }
+
+        rejected = history.size() - ok - returned;
+
+        int ignored = script.length - history.size();
+
+        System.out.println("=== Summary ===");
+        System.out.println("steps=" + history.size());
+        System.out.println("ok=" + ok);
+        System.out.println("rejected=" + rejected);
+        System.out.println("returned=" + returned);
+        System.out.println("ignored=" + ignored);
+        System.out.println("lowestEnergy=" + lowestEnergy);
+
+        System.out.println("=== Final Status ===");
+        System.out.println("energy=" + energy);
+        System.out.println("samples=" + samples);
+        System.out.println("actionCount=" + actionCount);
+        System.out.println("outcome=" + outcome);
+
+        double battery = energy / 20.0 * 100;
+        System.out.println("battery=" + battery);
     }
 }
