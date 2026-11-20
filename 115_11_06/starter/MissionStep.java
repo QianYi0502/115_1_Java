@@ -1,41 +1,42 @@
-// 類別：MissionStep（第 5 週學生實作）
-// 意義：任務日誌中「已經發生的一步」，保存那一步的指令、執行後能源與結果。
-// 作用：取代第 4 週的三條平行清單，讓同一步的三個值放在同一個物件裡。
-// 目前已依指定需求完成 getter 與成功判斷。
-public class MissionStep {
-    // command：這一步讀到的指令編號（0 返回、1 探索、2 掃描、3 充電；其他整數為無效指令）。
-    private int command;
-    // energy：這一步執行「之後」的能源格數，是當下的數值快照，之後不會改變。
-    private int energy;
-    // result：這一步的結果，例如「成功」「能源不足」「能源已滿」「返回」「無效指令」。
-    private String result;
 
-    // 建構子：建立一筆紀錄時一次收齊三個值，所以不會出現只記到一半的紀錄。
-    public MissionStep(int command, int energy, String result) {
-        this.command = command;
-        this.energy = energy;
-        this.result = result;
-    }
+ // 類別：MissionStep（第 5 週學生實作）
+ // 意義：保存任務日誌中已經發生的一步。
+ // 記錄指令、執行後能源與執行結果。
+ public class MissionStep {
 
-    // getCommand：回傳這一步的指令編號。
-    // 三個 getter 讀取本物件欄位。
-    public int getCommand() {
-        return command;
-    }
+     // 這一步讀取的指令編號
+     private int command;
 
-    // getEnergy：回傳這一步執行後的能源。
-    public int getEnergy() {
-        return energy;
-    }
+     // 執行後的能源快照
+     private int energy;
 
-    // getResult：回傳這一步的結果字串。
-    public String getResult() {
-        return result;
-    }
+     // 執行結果
+     private String result;
 
-    // isSuccessful：這一步的結果是不是「成功」；是回傳 true，否則回傳 false。
-    public boolean isSuccessful() {
-        // 以字串內容比較是否成功。
-        return "成功".equals(result);
-    }
-}
+     // 建構子：建立一筆完整的任務紀錄
+     public MissionStep(int command, int energy, String result) {
+         this.command = command;
+         this.energy = energy;
+         this.result = result;
+     }
+
+     // 回傳指令編號
+     public int getCommand() {
+         return command;
+     }
+
+     // 回傳執行後能源
+     public int getEnergy() {
+         return energy;
+     }
+
+     // 回傳執行結果
+     public String getResult() {
+         return result;
+     }
+
+     // 判斷這一步是否成功
+     public boolean isSuccessful() {
+         return "成功".equals(result);
+     }
+ }
