@@ -23,8 +23,17 @@ public class Mission {
 
     // run：依序執行腳本中的指令並記錄日誌，直到腳本讀完、收到返回指令，或探測車停止。
     public void run(int[] script) {
-        // TODO 1：逐筆執行。先檢查 isStopped；每讀一筆就保存行動後快照。
-        // 指令 0 也先記錄，再把 returned 設為 true 並離開迴圈。
+        for (int command : script) {
+            if (returned || rover.isStopped()) {
+                break;
+            }
+            String result = rover.execute(command);
+            history.add(new MissionStep(command, rover.getEnergy(), result));
+            if (command == 0) {
+                returned = true;
+                break;
+            }
+        }
     }
 
     // getOutcome：回傳任務結果：「任務成功」「能源耗盡」「已返回」或「任務未完成」。
@@ -57,8 +66,11 @@ public class Mission {
 
     // countOk：回傳日誌中結果為「成功」的筆數。
     public int countOk() {
-        // TODO 2：走訪 history，以 isSuccessful 計算 成功 筆數。
-        return 0;
+        int ok = 0;
+        for (MissionStep step : history) {
+            if (step.isSuccessful()) { ok++; }
+        }
+        return ok;
     }
 
     // countRejected：回傳被拒絕的筆數。
@@ -75,7 +87,11 @@ public class Mission {
 
     // lowestEnergy：回傳日誌中最低的「執行後能源」；日誌是空的回傳 -1，表示沒有紀錄。
     public int lowestEnergy() {
-        // TODO 3：空清單回傳 -1；非空先取第一筆，再以迴圈求最低能源。
-        return -1;
+        if (history.isEmpty()) { return -1; }
+        int lowest = history.get(0).getEnergy();
+        for (MissionStep step : history) {
+            if (step.getEnergy() < lowest) { lowest = step.getEnergy(); }
+        }
+        return lowest;
     }
 }

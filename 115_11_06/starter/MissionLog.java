@@ -69,7 +69,7 @@ public class MissionLog {
                     break;
             }
             // 每讀一筆就建立一個新物件，記錄行動執行後的快照。
-            // TODO 4：在這裡一次新增本步的 MissionStep，包含拒絕、無效與返回。
+            history.add(new MissionStep(command, energy, result));
         }
 
         String outcome;
@@ -108,7 +108,11 @@ public class MissionLog {
     // 每一步的三個值都從同一個 MissionStep 物件用 getter 取出。
     static void printReplay(ArrayList<MissionStep> history) {
         System.out.println("=== 任務回放 ===");
-        // TODO 5：依索引取出 MissionStep，以 getter 印出與第四週相同的逐步回放。
+        for (int i = 0; i < history.size(); i++) {
+            MissionStep step = history.get(i);
+            System.out.println("步驟 " + (i + 1) + ": 指令=" + step.getCommand()
+                    + ", 結果=" + step.getResult() + ", 能源=" + step.getEnergy());
+        }
     }
 
     // printSummary：印出摘要（步數、成功、拒絕、略過）與最低能源。
@@ -116,7 +120,13 @@ public class MissionLog {
     static void printSummary(int scriptLength, ArrayList<MissionStep> history) {
         int ok = 0;
         int returned = 0;
-        // TODO 6：走訪 history，計算 成功 與 返回 筆數；後面的摘要與最低值已提供。
+        for (MissionStep step : history) {
+            if (step.isSuccessful()) {
+                ok++;
+            } else if ("返回".equals(step.getResult())) {
+                returned++;
+            }
+        }
         int steps = history.size();
         int rejected = steps - ok - returned;
         int ignored = scriptLength - steps;
