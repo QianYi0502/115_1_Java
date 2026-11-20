@@ -1,0 +1,9 @@
+
+{
+    "java.project.excludedPaths": [
+        "115_11_20/java-07/ai-check"
+    ],
+    "java.import.exclusions": [
+        "**/java-07/ai-check/**"
+    ]
+}
