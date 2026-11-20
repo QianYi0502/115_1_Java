@@ -1,185 +1,191 @@
-# 第二週實作｜火星探測車任務儀表板
+# 第四週學生實作：火星探測車任務日誌
 
-作業的必做範圍、繳交清單與驗收標準見 [assignment.md](assignment.md)。本講義另存後作為實作與測試報告，不必再寫一份重複報告。
+姓名：吳芊翊　學號：A114222036　
 
-你是任務控制員。今天用固定資料判讀探測車狀態；下週才讓它接收指令與改變狀態。規則是教學遊戲設定，不是太空工程模型。
+另存為當日 LAB_REPORT.md。A–H 必做，最後的延伸選做。先預測再執行；教師示範觀察與本人實測分開。作業完整需求見 [assignment.md](assignment.md)。
 
-## 0. 取回與建立今日工作位置（10 分鐘，含診斷）
+## A｜取回與先備診斷（10 分鐘）
 
-沿用學期 repo `115_1_Java`。沒有本機副本時用 GitHub Desktop **Clone repository**；已有副本時先保存並提交本機工作，再 **Fetch origin → 有更新才 Pull origin**。遇到衝突請教師協助，不強制覆蓋。
+1. 無 repo 時 clone，有副本先保存再 Fetch/Pull；在 115_1_Java/YYYY_MM_DD 建 java-04/src。
+2. 放五個核心 examples 與 starter/MissionLog.java，勿放 teacher 同名類別；日期下放本報告及 AI_USAGE。
+3. 執行 java -version、javac -version，寫下完整版本：待填。不限定特定 JDK 版本。
+4. 在 java-04 編譯 `javac -encoding UTF-8 -d out src/*.java`；成功後跑 MissionLog。此時能跑任務但日誌與摘要未完成，是預期起始狀態。
 
-上課日期由教師指定，不把課綱日期區間當成確定日期。在 repo 內新增 `實際日期/java-02/src`（將「實際日期」替換成例如 `YYYY_MM_DD` 的真實上課日期）；不另建 Git repo。
+診斷：第三週 {1,1,2} 的最終能源/樣本/成功行動次數：待填。{2,1,1} 是否相同：待填。只有最終三個數字，能否分辨路線：待填。
 
-- 複製 `starter/RoverDashboard.java`、兩支 `examples/*.java` 到 `src`。
-- 本講義另存當日 `LAB_REPORT_WEEK02.md`，AI 範本另存 `AI_USAGE_WEEK02.md`。
-- 沿用根 `.gitignore` 的 `*.class`、`out/`、`bin/` 規則。
-- 下列指令都在 **當日 java-02 目錄**執行，先確認 `src` 存在。
+## B｜固定資料：陣列與計數（30 分鐘）
 
-```powershell
-javac --release 21 -encoding UTF-8 -d out src/RoverDashboard.java src/TypeReferenceDemo.java src/OperatorDemo.java
-java -cp out RoverDashboard
-```
+教科書 §7.2–7.4、§7.7。先讀 ArrayBasics，再執行。
 
-教學目標 JDK 21；若教師核准使用較新 JDK，以 `--release 21` 保持目標版本。編譯失敗先修正，不執行殘留 `.class`。
-
-| 基本資料 | 填寫 |
-|---|---|
-| 姓名／上課日期／專案實際路徑 | 待填 |
-| GitHub repo、取回的 commit | 待填 |
-| `java -version`、`javac -version` | 待填 |
-
-診斷：`double p = calculateBatteryPercent(7);` 的引數、參數、回傳值各是什麼？`return` 會自動顯示到畫面嗎？回答：待填。
-
-## A. 為探測車選型（15 分鐘）
-
-| 資料 | 選擇 Java 型態 | C# 對照／理由 |
+| 項目 | 預測 | 本人實際結果 |
 |---|---|---|
-| 名稱「赤砂號」 | 待填 | 待填 |
-| 區域 'A' | 待填 | 待填 |
-| 能源 7 格 | 待填 | 待填 |
-| 電量百分比 35.0 | 待填 | 待填 |
-| 是否鎖定 false | 待填 | 待填 |
+| script.length | 待填 | 待填 |
+| new int[4] 內容 | 待填 | 待填 |
+| new String[2] 內容 | 待填 | 待填 |
+| 逐步指令輸出 | 待填 | 待填 |
+| 指令數值加總（不是行動數） | 待填 | 待填 |
 
-1. Java 的八種基本型態：待填。哪個常用型態不在其中？待填。
-2. Java 能寫 `bool locked = false;` 或 `string name = "赤砂號";` 嗎？修正：待填。
-3. `char zone = 'A';` 與 `String zone = "A";` 的型態是否相同？待填。
-4. `long distance = 3000000000L;` 與 `float sensor = 3.5F;` 的後綴用途：待填。
+1. length 是欄位，不加括號；陣列合法索引範圍是：待填。
+2. 在副本取消越界行註解，編譯並執行，記錯誤種類與索引：待填。隨即恢復。
+3. 執行 CommandCounter：腳本 {3,9,0,1,1,-1}，預測 counts：待填；實際：待填。9 和 -1 為何不得當索引：待填。
+4. 把 CommandCounter 的固定資料改為 {0,2,2,3}，預測：待填；實際：待填；恢復原示範。
+5. 一般 for 適合需要步號/索引；加強版 for 適合只讀每筆值。若在 `for (int command : script)` 內寫 command=0，是否改掉 script 的元素：待填。用副本檢查：待填。
 
-執行 `java -cp out TypeReferenceDemo`。八種型態變數的前兩行實際輸出：待填。
+## C｜參考與方法（10 分鐘）
 
-## B. 值與參考追蹤（25 分鐘）
+教科書 §7.8–7.9。ArrayReference 的兩個變數先指向同一陣列；畫箭頭或用文字描述。
 
-先讀 `TypeReferenceDemo`，先填預測，再執行觀察。
-
-| 步驟 | energy | backupEnergy | 原因 |
-|---|---|---|---|
-| `int energy = 7; int backupEnergy = energy;` | 待填 | 待填 | 待填 |
-| `energy = 6;` | 待填 | 待填 | 待填 |
-
-| 步驟 | consoleName 指向的字串內容 | logName 指向的字串內容 |
+| 時間點 | 預測 energy 內容 | 本人實際 |
 |---|---|---|
-| `String consoleName = "赤砂號";` | 待填 | 尚未宣告 |
-| `String logName = consoleName;` | 待填 | 待填 |
-| `consoleName = "晨星號";` | 待填 | 待填 |
+| alias[0]=19 後 | 待填 | 待填 |
+| changeFirst 後 | 待填 | 待填 |
+| replaceLocal 內的新陣列 | 待填 | 待填 |
+| 回到 main 後 | 待填 | 待填 |
+| == 與 Arrays.equals 的兩個結果 | 待填 | 待填 |
 
-畫出最後兩個變數與字串物件的箭頭：待填。這是重新指定參考，還是修改「赤砂號」物件？待填。能據此推論所有參考物件都不能修改嗎？待填。
+Java 傳值；陣列參數取得的是：待填。為何修改元素看得見，重新指定參數卻不改呼叫端：待填。
 
-密室門禁短題（最多 5 分鐘，已含在本節）：
+## D｜筆數會增加：ArrayList（15 分鐘）
 
-```java
-String code = "MARS";
-String receivedCode = new String("MARS");
-System.out.println(code == receivedCode);
-System.out.println(code.equals(receivedCode));
-```
+教科書 §7.16、§16.3–16.4。C# List<T> 若尚未學過，以右欄 Java 為準。
 
-| 檢查 | 預測 | 實際 | 比較的是什麼 |
+先分清腳本與日誌：{1,1,1,1}有四筆預定指令，但從20/0出發第三次探索就達標，因此只記三筆。陣列可搭配有效筆數保存；ArrayList每記錄一步就add，size()直接取得已存筆數，本週用它練習逐筆記錄。
+
+| 操作 | C# List<int> | Java ArrayList<Integer> |
+|---|---|---|
+| 筆數 | Count | size() |
+| 讀第 i 筆 | list[i] | get(i) |
+| 改第 i 筆 | list[i]=x | set(i,x) |
+| 尾端新增 | Add(x) | add(x) |
+| 刪索引 | RemoveAt(i) | remove(i) |
+
+執行 ListBasics：
+
+| 項目 | 預測 | 本人實際 |
+|---|---|---|
+| 原清單/size/first | 待填 | 待填 |
+| set(1,3) 後 | 待填 | 待填 |
+| remove(0) 後 | 待填 | 待填 |
+| remove(Integer.valueOf(3)) 後 | 待填 | 待填 |
+| isEmpty() | 待填 | 待填 |
+
+int 放入清單會裝箱，讀成 int 會拆箱；ArrayList<int> 為何不能編譯：待填。可以在副本重現編譯訊息，但必須恢復可編譯版本。remove 的兩種用途只需能分辨，不要求說明完整過載規則。
+
+## E｜新增、回放、計數（35 分鐘）
+
+教師提供第三週的行動規則、迴圈與方法骨架，先只完成 TODO **2→3→1**。每完成一項就編譯。F1 再完成 4、5。
+
+- TODO 2：每步執行後把 command、energy、result 同時 add；拒絕、無效與返回也要保存。
+- TODO 3：同一索引讀三條清單，格式 `step 1: command=1, result=OK, energy=14`。
+- TODO 1：建立 int[4]，計算日誌中的 0–3 指令；越界指令不進 counts。
+
+{3,9,0} 的逐步追蹤：
+
+| 步 | 指令 | 預測結果/執行後能源 | 本人實際結果/能源 |
 |---|---|---|---|
-| `code == receivedCode` | 待填 | 待填 | 待填 |
-| `code.equals(receivedCode)` | 待填 | 待填 | 待填 |
+| 1 | 3 | 待填 | 待填 |
+| 2 | 9 | 待填 | 待填 |
+| 3 | 0 | 待填 | 待填 |
 
-教師用 `new String` 保證兩個不同字串參考，不要求自行設計類別。若兩個字串常值用 `==` 恰好得到 true，為何不能據此用 `==` 實作一般通行碼內容比較？待填。
+此時 commandLog/energyLog/resultLog 各有幾筆：待填。actionCount 是幾次：待填。差異原因：待填。
 
-`null` 表示參考未指向物件；本週字串題使用非 null 資料，先不加完整防護。
+完成 F1 的摘要後，補齊六條本人測試。每列修改 main 固定腳本並重新編譯，初始值 20/0；將**完整輸出**貼在本表下方，包含回放、counts、摘要、最低能源、最終狀態與 battery。
 
-## C. 能源運算與條件（25 分鐘）
-
-用 energy=7，先預測 `OperatorDemo`：
-
-| 運算式 | 預測 | 實際 | 每步先算什麼／型態 |
+| script | 預期狀態/結果 | 本人實際狀態/結果 | counts、摘要、每筆回放均相符？ |
 |---|---|---|---|
-| `energy / 20 * 100.0` | 待填 | 待填 | 待填 |
-| `(double) (energy / 20) * 100` | 待填 | 待填 | 待填 |
-| `(double) energy / 20 * 100` | 待填 | 待填 | 待填 |
-| `energy / 20.0 * 100` | 待填 | 待填 | 待填 |
-| `(int) 7.9` | 待填 | 待填 | 待填 |
-| `"合計=" + 2 + 3` | 待填 | 待填 | 待填 |
-| `"合計=" + (2 + 3)` | 待填 | 待填 | 待填 |
+| {0} | 20/0/0 RETURNED | 待填 | 待填 |
+| {1,1,2} | 6/5/3 SUCCESS | 待填 | 待填 |
+| {2,2,2,2,2} | 10/5/5 SUCCESS | 待填 | 待填 |
+| {3,9,0} | 20/0/0 RETURNED | 待填 | 待填 |
+| {1,1,1,1} | 2/6/3 SUCCESS | 待填 | 待填 |
+| {2,1} | 12/3/2 UNFINISHED | 待填 | 待填 |
 
-1. `int n=0; n+=2; n++; n--;` 最後 n：待填。`n++` 作獨立敘述有何用途？待填。
-2. 能源介於 0 與 20（含兩端）的條件：待填。不要寫數學連寫 `0 <= energy <= 20`。
-3. 能源至少 6 且未鎖定的條件：待填。
-4. 能源無效（小於 0 或大於 20）的條件：待填。
+完整輸出：待貼。繳交前恢復 {1,1,2}。課堂沒完成的路線，課後補齊本人實測。
 
-short-circuit evaluation 追蹤：`reportCheck()` 會印「右側檢查已執行」再回傳 true。
+## F｜摘要、需求與反例（30 分鐘）
 
-| 運算 | 右側方法會被呼叫嗎？ | 最後布林結果 | 實際輸出 |
-|---|---|---|---|
-| `false && reportCheck()` | 待填 | 待填 | 待填 |
-| `true \|\| reportCheck()` | 待填 | 待填 | 待填 |
-| `true && reportCheck()` | 待填 | 待填 | 待填 |
+### F1 Collections 與 TODO 4–5（10 分鐘）
 
-實際執行：`java -cp out OperatorDemo`。`&&` 左側 false、`||` 左側 true 時，右側不求值；不只是在最後才比較結果。
+先執行 CollectionsDemo，預測 min/max/frequency：待填；實際：待填。排序後 original：待填；sorted：待填。為何不能只排序 energyLog 來做回放：待填。
 
-手搖飲配料短題（最多 3 分鐘）：有 53 單位珍珠，每份用 8 單位，最多完整做幾份？剩多少？運算式與實測：待填。
+- TODO 4：ok=frequency(resultLog,"OK")，returned=frequency(resultLog,"RETURN")；steps=size，rejected=steps-ok-returned，ignored=scriptLength-steps。
+- TODO 5：isEmpty 為 true 時印 `lowest energy=N/A`；否則才用 min。
+- 最低能源只看每步結束後的 energyLog，不含初始能源。
 
-## D. 完成任務儀表板（25 分鐘）
+教師使用 FixedScriptMission 示範以下案例；學生填預測與觀察，不需另寫入口。未觀察請註明待補；自己另跑者再註明「本人複驗」。
 
-電池容量 20；探索一次用 6 格。核心計算假設 energy 為 0 至 20。完成 starter 的五個 TODO，不加入 if、迴圈或輸入工具：
+| 初始 energy/samples；script | 預測結果/日誌筆數/最低能源 | 教師實際示範觀察 |
+|---|---|---|
+| 5/0；{1,3,0} | 待填 | 待填 |
+| 2/4；{2} | 待填 | 待填 |
+| 0/0；{3,1} | 待填 | 待填 |
+| 20/5；{1} | 待填 | 待填 |
+| 20/0；{} | 待填 | 待填 |
 
-1. 跟做：完成 `calculateBatteryPercent(int energy)`，使用浮點除法，方法只回傳。
-2. 獨立完成：完整探索次數、剩餘能源、有效範圍、探索資格。
-3. 可改名稱與區域。只輸出資格，今天還不真正執行探索。
-4. 保存人工初版；重新編譯，逐次修改 energy／locked 並重跑。
+### F2 Prompt 設計（10 分鐘）
 
-| energy | locked | 預測百分比／探索次數／餘量／資格 | 實際四個結果 | 通過／修正 |
-|---|---|---|---|---|
-| 0 | false | 待填 | 待填 | 待填 |
-| 5 | false | 待填 | 待填 | 待填 |
-| 6 | false | 待填 | 待填 | 待填 |
-| 7 | false | 待填 | 待填 | 待填 |
-| 20 | false | 待填 | 待填 | 待填 |
-| 6 | true | 待填 | 待填 | 待填 |
+目的：把剛才實作的日誌轉成清楚的資料需求，作為判斷 AI 建議是否適合的依據。
 
-獨立範圍題：只評估 `energy >= 0 && energy <= 20`；分別代入 -1、0、20、21，結果：待填。-1、21 不屬於本週計算方法的輸入契約，不要求儀表板拒絕這些值。
+先填下表，再自行組成可直接提問的一段 Prompt。接著用這份需求判讀下方兩個模擬建議。沿用原本的 MissionLog，本段產出為一段 Prompt 與兩項判斷；真實 AI 服務可選。
 
-## E. AI 建議反例與自主驗證（20 分鐘）
-
-以下是教材自編的 AI 建議情境，並非真實服務對話：
-
-```java
-static double calculateBatteryPercent(int energy) {
-    return energy / 20 * 100.0;
-}
-```
-
-1. 對方說「回傳 double 所以一定有小數」，用 energy=7 解釋反例：待填。
-2. 為何只測 energy=0 和 20 可能漏掉問題？待填。
-3. 在測試副本重現錯誤，實際輸出與最小修正：待填。
-4. 恢復正確程式，再跑 D 的六筆。證據位置：待填。
-5. 用 AI_USAGE 範本記錄實際對話。沒有 AI 權限可自行解釋本情境，並明寫未使用服務；不捏造模型、回覆或測試。
-
-## F. 課末檢核（15 分鐘）
-
-不看教師答案完成：
-
-1. energy=13、locked=false，百分比／探索次數／餘量／資格：待填。
-2. 為何 `(double)(7 / 20)` 不能補回被捨去的部分？待填。
-3. `String a="A"; String b=a; a="B";`，b 內容與理由：待填。
-4. 寫出「能源無效或車輛被鎖定」的條件：待填。
-5. 用自己的話解釋方法回傳與 Console 輸出：待填。
-
-同儕回饋：哪一筆測試最能揭露錯誤？為什麼？待填。
-
-## G. 保存、推送與繳交（15 分鐘）
-
-- [ ] 當日專案 README 寫明用途、JDK、上述編譯指令、energy=7 的預期輸出。
-- [ ] 本講義、AI 紀錄、原始碼已存檔；`.class` 和 out 未納入版本控制。
-- [ ] Desktop 選對原本 repo/main，閱讀 Changes，Commit to main（例如 `week02: complete rover dashboard`）。
-- [ ] Push origin 成功，再到 GitHub 核對最新 commit 與當日來源檔、紀錄。
-- [ ] 繳交 repo 網址與最終 commit；若最後又修改紀錄，重新 commit/push。
-- [ ] 無法 Push 時告知教師，備份完整 repo 至不會還原的位置；不要只留在還原磁碟。
-
-| 保存證據 | 填寫 |
+| 要交代的需求 | 本人的內容 |
 |---|---|
-| 最終 commit／GitHub 連結 | 待填 |
-| 網站來源檔、紀錄與本機一致 | 待填 |
-| 尚未完成與後續事項 | 待填 |
+| 欄位與型態 | 待填 |
+| 筆數是否事先固定 | 待填 |
+| 是否保留順序 | 待填 |
+| 是否容許重複 | 待填 |
+| 新增、回放、計數與最低值等操作 | 待填 |
+| 允許的技術與驗證案例 | 待填 |
 
-CLI 選讀：已有副本且工作已保存時，依第一週補充使用 `git pull --ff-only`；結束用 `git add`（明確檔案）、`git commit`、`git push`。命令失敗先確認路徑與歷史，不強制推送。
+完整 Prompt：待填。
 
-課後重現：將已推送 repo clone 到另一個不存在的檢查位置，在當日 java-02 重新編譯並執行；不要複製 out。記錄 clone commit 與輸出：待填。此步可依教師安排課後完成。
+判讀下列**模擬建議**：
 
-## 下週入口
+| 建議 | 採納/拒絕/補充條件與理由 |
+|---|---|
+| 歷程最多用 int[100] 保存就好 | 待填：上限、有效筆數、超過時如何處理？ |
+| ArrayList 保存日誌，HashSet 保存指令，避免重複 | 待填：任務可重複探索，順序與重複是否必要？ |
 
-你已會算「是否能探索」，下週用 if 讓條件決定行動，用 switch 選探索／掃描／充電，用迴圈完成任務。本週不要求 Scanner、陣列、集合或自行設計 Rover 類別。
+不要求實作 HashSet；依 List/Set/Map 的概觀判讀即可。使用固定腳本時筆數有上限，但日誌仍逐步成長且將來可能回到互動輸入；不能一概宣稱陣列無法記錄歷程。
+
+### F3 模擬 AI 除錯二選一（10 分鐘）
+
+先 commit 人工版，在副本測試，最後恢復正確版。
+
+1. 刪掉 countCommands 的範圍檢查，理由「指令只有 0–3」；反例可用 {3,9,0}。
+2. 把 printReplay 的 `< commandLog.size()` 改成 `<= commandLog.size()`，理由「最後一步也要印」；反例可用 {0}。
+
+| 證據 | 本人紀錄 |
+|---|---|
+| 選哪種建議與反例；預期行為 | 待填 |
+| 修改前實際結果/錯誤訊息 | 待填 |
+| 最小修正與採納/拒絕理由 | 待填 |
+| 修正後反例實際結果 | 待填 |
+| 修正後 {1,1,2} | 待填，可引用 E 的本人輸出 |
+| 修正後 {3,9,0} | 待填，可引用 E 的本人輸出 |
+
+若時間不足，課後補測；AI_USAGE 的驗證欄可引用本表，不必重抄。
+
+## G｜課末檢核與第五週入口（5 分鐘）
+
+1. length、size()、length() 分別用於什麼：待填。
+2. 三筆日誌是否必定代表三次成功行動：待填。
+3. 三條清單漏加其中一筆會發生什麼：待填。
+4. 為何固定四種指令計數用陣列，逐步增加的日誌用 ArrayList：待填。
+5. 下週如何把同一步三個欄位整合在一起：待填，本週不要求寫類別。
+
+## H｜保存、推送與取回（15 分鐘）
+
+- 恢復預設腳本，重新編譯執行；LAB_REPORT、AI_USAGE、專案 README 完成。
+- commit、push，核對 GitHub main 最新 commit 與來源檔。只 commit 或 Changes 空白不代表已推送。
+- 在另一位置 clone，同一專案重新編譯並跑 MissionLog；課堂不足可課後完成。
+
+GitHub repo/作業目錄：待填；最終 commit：待填。
+本人新副本 JDK/編譯/預設輸出：待填，未做標示待補。
+推送若失敗先請教師協助，仍無法推送時保存完整 repo 至不會還原的位置，確認可讀並後續補推。
+
+## 課後選做
+
+- ScriptArgs：執行 `java -cp out ScriptArgs 3 9 0`，說明 args 的元素型態；非整數例外不列必做。
+- 新增自訂路線，比較達標時剩餘能源與成功行動數，不要求最佳化演算法。
+- 只顯示成功步驟時，以 if 跳過顯示；保留原日誌，驗證 counts 和摘要仍相同。
