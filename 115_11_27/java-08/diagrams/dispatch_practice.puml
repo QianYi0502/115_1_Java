@@ -1,0 +1,49 @@
+
+@startuml
+skinparam classAttributeIconSize 0
+skinparam defaultFontName Microsoft JhengHei
+skinparam defaultFontSize 16
+hide circle
+
+class Rover {
+    - energy : int
+    - samples : int
+    - actionCount : int
+    + Rover(energy : int, samples : int)
+    + execute(command : int) : String
+    + isStopped() : boolean
+    + getEnergy() : int
+    + getSamples() : int
+    + getActionCount() : int
+    # exploreYield() : int
+    # spendEnergy(amount : int) : boolean
+    # addSamples(amount : int) : void
+    # countAction() : void
+}
+
+class HeavyRover {
+    - drillCount : int
+    + HeavyRover(energy : int, samples : int)
+    + getDrillCount() : int
+    + drill() : String
+    + execute(command : int) : String
+    # exploreYield() : int
+}
+
+class SurveyRover {
+    + SurveyRover(energy : int, samples : int)
+    # exploreYield() : int
+}
+
+class Mission {
+    + Mission(rover : Rover)
+    + run(script : int[]) : void
+    + getStepCount() : int
+    + getOutcome() : String
+}
+
+Rover <|-- HeavyRover
+Rover <|-- SurveyRover
+Mission --> Rover : has-a
+
+@enduml
